@@ -1,5 +1,9 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+
+import axios from "axios";
 import styled from "@emotion/styled";
+import useCripto from '../hooks/useCripto';
+import useMoneda from '../hooks/useMoneda';
 
 const CajaTexto = styled.div`
 height: 100vh;
@@ -22,25 +26,7 @@ const Separador = styled.hr`
     margin-left: 0;
     
 `
-const Subtitle = styled.h3`
 
-      color: white;
-      font-size: 30px;
-
-  text-transform:uppercase;
-  font-weight: 50px;
-`
-
-const Select = styled.select`
-  font-size: 20px;
-  /* border: white; */
-  border-radius: 30px;
-  padding: 5px 20px;
-  width: 50%;
-  height: 50px;
-  
-
-`
 
 const Boton = styled.button`
   width: 50%;
@@ -56,7 +42,73 @@ const Form = styled.form`
   margin-top: -100px;
 `
 
-function Texto() {
+const Alert = styled.div`
+  background-color: red;
+  color: white;
+  height: 50px;
+  width: 50%;
+  text-align: center;
+  font-weight: 500;
+  border-radius: 30px;
+  margin-top: 40px;
+  
+`
+
+function Texto({setCriptos, setPeso}) {
+
+  
+  const Monedas = [
+    { codigo: "USD", nombre: "Dolar de Estados Unidos"},
+    { codigo: 'MXN', nombre: 'Peso Mexicano' },
+    { codigo: 'EUR', nombre: 'Euro' },
+    { codigo: 'GBP', nombre: 'Libra Esterlina' }
+  ]
+  const [apiRtdo, setApiRtdo] = useState([]);
+  
+  const [moneda, SeleccionMoneda] = useMoneda(Monedas, "");
+  const [cripto, SelectCripto] = useCripto(apiRtdo, "");
+  const [error, setError] = useState(false);
+
+
+  useEffect(() => {
+
+    const consultarApi = async () => {
+      
+      const url = "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD";
+      const resultado = await axios.get(url) ;
+
+      setApiRtdo(resultado.data.Data)
+
+      
+    }
+
+    consultarApi()
+  
+  }, []);
+
+
+  const mostrarRtdo = (e) => {
+
+    e.preventDefault();
+
+    if (moneda === "" || cripto === "") {
+      
+      setError(true);
+      return
+
+    }
+    setError(false);
+
+    setPeso(moneda)
+    setCriptos(cripto)
+
+    
+    
+  }
+
+
+
+
   return (
     <CajaTexto>
 
@@ -64,19 +116,18 @@ function Texto() {
         <Titulo>Cotiza criptomonedas al instante</Titulo>
         <Separador />
       </div>
-      <Form action="">
+      <Form action="" onSubmit={mostrarRtdo}>
         <div>
-          <Subtitle>Elige tu moneda</Subtitle>
-          <Select name="" id="">
-            <option value="usd">Dolar</option>
-          </Select>
-          <Subtitle>Elige tu criptomoneda</Subtitle>
-          <Select name="" id="">
-            <option value="btc">Bitcoin</option>
-          </Select>
+
+          <SeleccionMoneda/>
+          <SelectCripto/>
         </div>
+      {error ? <Alert>
+        <h1>Complete todos los campos</h1>
+      </Alert> : null}
         <Boton type="submit">Calcular</Boton>
       </Form>
+
 
 
     </CajaTexto>
