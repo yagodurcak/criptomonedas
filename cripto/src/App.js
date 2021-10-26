@@ -5,6 +5,7 @@ import Img from "./img/cryptomonedas.png"
 import Spinner from './components/Spinner';
 import Texto from "./components/Texto";
 import axios from "axios";
+import media from 'emotion-media-query';
 import styled from "@emotion/styled";
 
 const Container= styled.div`
@@ -14,6 +15,8 @@ grid-template-columns: repeat(2, 1fr);
 grid-template-rows: 1fr;
 grid-column-gap: 0px;
 grid-row-gap: 0px;
+
+  
 `
 const Imagen = styled.img`
 
