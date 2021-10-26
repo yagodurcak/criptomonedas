@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
+import Cotizacion from './components/Cotizacion';
 import Img from "./img/cryptomonedas.png"
+import Spinner from './components/Spinner';
 import Texto from "./components/Texto";
 import axios from "axios";
 import styled from "@emotion/styled";
 
 const Container= styled.div`
+
   display: grid;
 grid-template-columns: repeat(2, 1fr);
 grid-template-rows: 1fr;
@@ -16,6 +19,16 @@ const Imagen = styled.img`
 
   height: 100vh;
   `
+  const Cuadro = styled.div`
+    height: 100vh;
+    /* background-color: blue; */
+    width: 100%;
+    display: grid;
+    justify-content: space-between;
+    align-items: stretch;
+
+  `
+
 
 
 
@@ -24,6 +37,8 @@ function App() {
 
   const [peso, setPeso] = useState("");
   const [criptos, setCriptos] = useState("");
+  const [cotizacion, setCotizacion] = useState({});
+  const [cargando, setCargando] = useState(false);
 
 
   useEffect(() => {
@@ -36,7 +51,18 @@ function App() {
 
         const rtdo = await axios.get(url)
 
-        console.log(rtdo);
+        setCargando(true)
+
+        setTimeout(() => {
+          
+        setCargando(false)
+
+          
+          setCotizacion(rtdo.data.DISPLAY[criptos][peso] )
+          
+        }, 3000);
+
+
     }
 
     buscarCotizacion()
@@ -47,7 +73,14 @@ function App() {
     <Container>
 
       <Imagen src={Img} alt="" />
-      <Texto setPeso={setPeso} setCriptos={setCriptos}/>
+      <Cuadro>
+        <Texto setPeso={setPeso} setCriptos={setCriptos}/>
+
+        {cargando ? <Spinner/>
+         :
+         <Cotizacion cotizacion={cotizacion}/>
+          }
+      </Cuadro>
 
       
     </Container>

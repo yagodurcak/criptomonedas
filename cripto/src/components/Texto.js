@@ -6,7 +6,7 @@ import useCripto from '../hooks/useCripto';
 import useMoneda from '../hooks/useMoneda';
 
 const CajaTexto = styled.div`
-height: 100vh;
+height: 100%;
 width: 100%;
 display: grid;
 align-items: center;
